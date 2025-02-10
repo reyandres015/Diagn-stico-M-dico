@@ -95,12 +95,20 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 30px;
+        }
+
+        .tables-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
         }
 
         table {
-            /* width: 100%; */
+            width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
             font-size: 18px;
             text-align: left;
         }
@@ -115,6 +123,10 @@
             background-color: #f2f2f2;
         }
 
+        tr.highlight {
+            /* font-weight: bold; */
+        }
+
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
@@ -126,21 +138,21 @@
 </head>
 
 <body>
-    {%if not diagnostico%}
+    {%if not diagnosticosProbables%}
     <h1>Diagnóstico Médico</h1>
     <form action="/diagnosticar" method="post" onsubmit="return validateForm()">
         <p>Selecciona los síntomas que presentas:</p>
 
         <label><input type="checkbox" name="sintomas" value="fiebre"> Fiebre</label>
         <label><input type="checkbox" name="sintomas" value="tos"> Tos</label>
-        <label><input type="checkbox" name="sintomas" value="dolor_cuerpo"> Dolor de cuerpo</label>
+        <label><input type="checkbox" name="sintomas" value="congestion_nasal"> Congestión nasal</label>
+        <label><input type="checkbox" name="sintomas" value="dolor_garganta"> Dolor de garganta</label>
         <label><input type="checkbox" name="sintomas" value="dificultad_respirar"> Dificultad para respirar</label>
         <label><input type="checkbox" name="sintomas" value="dolor_pecho"> Dolor en el pecho</label>
         <label><input type="checkbox" name="sintomas" value="perdida_olfato"> Pérdida del olfato</label>
         <label><input type="checkbox" name="sintomas" value="perdida_gusto"> Pérdida del gusto</label>
         <label><input type="checkbox" name="sintomas" value="estornudos"> Estornudos</label>
         <label><input type="checkbox" name="sintomas" value="picazon_ojos"> Picazón en los ojos</label>
-        <label><input type="checkbox" name="sintomas" value="congestion_nasal"> Congestión nasal</label>
         <label><input type="checkbox" name="sintomas" value="dolor_cabeza"> Dolor de cabeza</label>
         <label><input type="checkbox" name="sintomas" value="nauseas"> Náuseas</label>
         <label><input type="checkbox" name="sintomas" value="sensibilidad_luz"> Sensibilidad a la luz</label>
@@ -152,18 +164,23 @@
     {%else%}
     <div class="result-container">
         <h2>Diagnóstico</h2>
-        <table>
-            <tbody>
-                <tr>
-                    <td>Enfermedad</td>
-                    <td>{{ diagnostico }}</td>
-                </tr>
-                <tr>
-                    <td>Recomendaciones</td>
-                    <td>{{recomendaciones}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="tables-container">
+            {% for sintoma in diagnosticosProbables.keys() %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Enfermedad</th>
+                        <th>Certeza</th>
+                </thead>
+                <tbody>
+                    <tr class="{% if loop.first %}highlight{% endif %}">
+                        <td>{{ sintoma }}</td>
+                        <td>{{ (diagnosticosProbables[sintoma] / totalPuntos * 100) | round(2) }}%</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% endfor %}
+        </div>
         <form action="/">
             <button>Nuevo diagnóstico</button>
         </form>
