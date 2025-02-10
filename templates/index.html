@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Médico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+            margin-top: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 20px;
+        }
+
+        /* Estilos del formulario */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        label:hover {
+            background: #e2e6ea;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        /* Botón */
+        button {
+            background: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #error-message {
+            display: none;
+            color: red;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        /* Sección de resultado */
+        .result-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        table {
+            /* width: 100%; */
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+    {%if not diagnostico%}
+    <h1>Diagnóstico Médico</h1>
+    <form action="/diagnosticar" method="post" onsubmit="return validateForm()">
+        <p>Selecciona los síntomas que presentas:</p>
+
+        <label><input type="checkbox" name="sintomas" value="fiebre"> Fiebre</label>
+        <label><input type="checkbox" name="sintomas" value="tos"> Tos</label>
+        <label><input type="checkbox" name="sintomas" value="dolor_cuerpo"> Dolor de cuerpo</label>
+        <label><input type="checkbox" name="sintomas" value="dificultad_respirar"> Dificultad para respirar</label>
+        <label><input type="checkbox" name="sintomas" value="dolor_pecho"> Dolor en el pecho</label>
+        <label><input type="checkbox" name="sintomas" value="perdida_olfato"> Pérdida del olfato</label>
+        <label><input type="checkbox" name="sintomas" value="perdida_gusto"> Pérdida del gusto</label>
+        <label><input type="checkbox" name="sintomas" value="estornudos"> Estornudos</label>
+        <label><input type="checkbox" name="sintomas" value="picazon_ojos"> Picazón en los ojos</label>
+        <label><input type="checkbox" name="sintomas" value="congestion_nasal"> Congestión nasal</label>
+        <label><input type="checkbox" name="sintomas" value="dolor_cabeza"> Dolor de cabeza</label>
+        <label><input type="checkbox" name="sintomas" value="nauseas"> Náuseas</label>
+        <label><input type="checkbox" name="sintomas" value="sensibilidad_luz"> Sensibilidad a la luz</label>
+
+        <button type="submit">Obtener Diagnóstico</button>
+        <p id="error-message"></p>
+    </form>
+
+    {%else%}
+    <div class="result-container">
+        <h2>Diagnóstico</h2>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Enfermedad</td>
+                    <td>{{ diagnostico }}</td>
+                </tr>
+                <tr>
+                    <td>Recomendaciones</td>
+                    <td>{{recomendaciones}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <form action="/">
+            <button>Nuevo diagnóstico</button>
+        </form>
+    </div>
+    {%endif%}
+</body>
+<script>
+    function validateForm() {
+        const checkboxes = document.querySelectorAll('input[name="sintomas"]');
+        const error = document.getElementById('error-message');
+        let checked = false;
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                checked = true;
+            }
+        });
+        if (!checked) {
+            error.textContent = "Por favor, selecciona al menos un síntoma.";
+            error.style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</html>
